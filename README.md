@@ -40,14 +40,17 @@ Observacion de la matriz homogenea
 ros2 launch kuka_moveit_config demo.launch.py
 
 
+
 Angulos ṕara la cinematica inversa
 
 ros2 topic echo /joint_states --once
 
 
+
 Evaluacion de planeadores para tramo 4A (RRTConnect y RRT*)
 
 python3 ~/ros2_ws/src/kuka_moveit_config/scripts/evaluar_planeadores.py
+
 
 
 Evaluacion de interpolacion cubica y quintuple
