@@ -22,6 +22,8 @@ Antes de hacer la simulacion de cada uno de los tramos, es muy importante hacer 
 
 colcon build --packages-select kdl_parser_py urdf_parser_py
 
+source install/setup.bash
+
 
 Ahora si se puede procedes con la simulacion de cada uno de los tramos, se puede desarrollar sucesivamente los siguientes codigos
 
