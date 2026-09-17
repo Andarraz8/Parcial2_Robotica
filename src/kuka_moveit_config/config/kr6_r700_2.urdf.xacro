@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="kr6_r700_2">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import kr6_r700_2 urdf base file -->
+    <xacro:include filename="$(find kuka_agilus_support)/urdf/kr6_r700_2.urdf.xacro" />
+
+    <!-- Import ros2_control mock components -->
+    <xacro:include filename="kr6_r700_2.ros2_control.xacro" />
+    <xacro:kr6_r700_2_ros2_control name="KR6System" initial_positions_file="$(find kuka_moveit_config)/config/initial_positions.yaml" />
+
+</robot>

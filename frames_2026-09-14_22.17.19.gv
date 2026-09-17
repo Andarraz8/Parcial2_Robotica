@@ -1,0 +1,16 @@
+digraph G {
+"world" -> "base_link"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"base_link" -> "link_1"[label=" Broadcaster: default_authority\nAverage rate: 14.484\nBuffer length: 5.04\nMost recent transform: 1789442239.794543\nOldest transform: 1789442234.754566\n"];
+"link_1" -> "link_2"[label=" Broadcaster: default_authority\nAverage rate: 14.484\nBuffer length: 5.04\nMost recent transform: 1789442239.794543\nOldest transform: 1789442234.754566\n"];
+"link_2" -> "link_3"[label=" Broadcaster: default_authority\nAverage rate: 14.484\nBuffer length: 5.04\nMost recent transform: 1789442239.794543\nOldest transform: 1789442234.754566\n"];
+"link_3" -> "link_4"[label=" Broadcaster: default_authority\nAverage rate: 14.484\nBuffer length: 5.04\nMost recent transform: 1789442239.794543\nOldest transform: 1789442234.754566\n"];
+"link_4" -> "link_5"[label=" Broadcaster: default_authority\nAverage rate: 14.484\nBuffer length: 5.04\nMost recent transform: 1789442239.794543\nOldest transform: 1789442234.754566\n"];
+"link_5" -> "link_6"[label=" Broadcaster: default_authority\nAverage rate: 14.484\nBuffer length: 5.04\nMost recent transform: 1789442239.794543\nOldest transform: 1789442234.754566\n"];
+"base_link" -> "base"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"link_6" -> "flange"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+"link_6" -> "tool0"[label=" Broadcaster: default_authority\nAverage rate: 10000.0\nBuffer length: 0.0\nMost recent transform: 0.0\nOldest transform: 0.0\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1789442239.8094454"[ shape=plaintext ] ;
+}->"world";
+}

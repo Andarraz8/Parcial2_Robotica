@@ -1,0 +1,107 @@
+MOVEIT_KUKA
+CODIGO BASICO
+cd ~/ros2_ws
+colcon build
+source install/setup.bash
+ros2 launch kuka_moveit_config demo.launch.py
+
+MATRIZ HOMOGENEA
+source ~/ros2_ws/install/setup.bash
+ros2 run tf2_ros tf2_echo base_link tool0
+
+CINEMATICA INVERSA
+ros2 topic echo /joint_states --once (IK)
+ros2 run tf2_ros tf2_echo base_link tool0 (DH)
+ PICK
+ ANGULOS (RAD)
+ - -0.6904986278236039
+ - -0.16922930523770818
+ - 1.3914006834143633
+ - 1.0450498843577591
+ - -1.2198533539734528
+ - -0.0009563660415208958
+ COMPROBACION DH
+ - Translation: [0.380, 0.409, 0.107]
+ - Rotation: in Quaternion (xyzw) [-0.633, 0.424, 0.406, 0.504]
+ - Rotation: in RPY (radian) [-2.074, 1.228, -0.392]
+ - Rotation: in RPY (degree) [-118.826, 70.352, -22.437]
+ - Matrix:
+   0.311 -0.947 -0.085  0.380
+  -0.128 -0.131  0.983  0.409
+  -0.942 -0.295 -0.162  0.107
+   0.000  0.000  0.000  1.000
+
+ PLACE
+ ANGULOS (RAD)
+ - 0.8738353217742733
+ - -0.5196511972698835
+ - 0.8660160732818817
+ - 1.5732661886046788
+ - 1.0511027280909564
+ - -2.0995554374530912e-05
+ COMPROBACION DH
+ - Translation: [0.358, -0.549, 0.378]
+ - Rotation: in Quaternion (xyzw) [-0.046, 0.800, -0.529, -0.278]
+ - Rotation: in RPY (radian) [-1.905, -0.517, 2.885]
+ - Rotation: in RPY (degree) [-109.161, -29.600, 165.302]
+ - Matrix:
+  -0.841 -0.368 -0.396  0.358
+   0.221  0.436 -0.873 -0.549
+   0.494 -0.821 -0.285  0.378
+   0.000  0.000  0.000  1.000
+
+PICK & PLACE
+nano ~/ros2_ws/src/kuka_moveit_config/scripts/add_environment.py
+python3 ~/ros2_ws/src/kuka_moveit_config/scripts/add_environment.py
+Codigo para pelota, obtaculo y mesa
+
+nano ~/ros2_ws/src/kuka_moveit_config/scripts/evaluar_planeadores.py
+python3 ~/ros2_ws/src/kuka_moveit_config/scripts/evaluar_planeadores.py
+Codigo para evaluar planeadores OMPL
+
+pre-pick + evaluacion planeadores
+--- EVALUANDO RRTConnect ---
+ÉXITO: Ruta encontrada esquivando el obstáculo.
+Tiempo de planeación: 0.0487 seg
+Nodos generados (Suavidad): 17 waypoints
+Longitud del camino: 3.2076 rad
+--- Evaluando RRT* ---
+ÉXITO: Ruta encontrada esquivando el obstáculo.
+Tiempo de planeación: 0.0436 seg
+Nodos generados (Suavidad): 18 waypoints
+Longitud del camino: 3.9899 rad
+
+calculo interpolacion para pick
+nano ~/ros2_ws/src/kuka_moveit_config/scripts/calculo_interpolacion.py
+python3 ~/ros2_ws/src/kuka_moveit_config/scripts/calculo_interpolacion.py
+=== ANÁLISIS DE TIEMPO DE VUELO (tf) ===
+Tiempo mínimo Cúbica:   1.691 s
+Tiempo mínimo Quíntica: 1.659 s
+-> Tiempo de vuelo SELECCIONADO: 2.0 s
+
+=== PERFILES TEMPORALES (Posición, Velocidad, Aceleración) ===
+Format: [Tiempo] | Posición (Z) | Velocidad (V) | Aceleración (A)
+
+--- INTERPOLACIÓN CÚBICA ---
+t=0.0s | P: 0.2500 m | V: 0.0000 m/s | A: -0.2145 m/s²
+t=0.5s | P: 0.2277 m | V: -0.0804 m/s | A: -0.1073 m/s²
+t=1.0s | P: 0.1785 m | V: -0.1073 m/s | A: 0.0000 m/s²
+t=1.5s | P: 0.1293 m | V: -0.0804 m/s | A: 0.1073 m/s²
+t=2.0s | P: 0.1070 m | V: 0.0000 m/s | A: 0.2145 m/s²
+
+--- INTERPOLACIÓN QUÍNTICA ---
+t=0.0s | P: 0.2500 m | V: 0.0000 m/s | A: 0.0000 m/s²
+t=0.5s | P: 0.2352 m | V: -0.0754 m/s | A: -0.2011 m/s²
+t=1.0s | P: 0.1785 m | V: -0.1341 m/s | A: 0.0000 m/s²
+t=1.5s | P: 0.1218 m | V: -0.0754 m/s | A: 0.2011 m/s²
+t=2.0s | P: 0.1070 m | V: 0.0000 m/s | A: 0.0000 m/s²
+
+TRAMO 4A (se va cambiando de a a d)
+nano ~/ros2_ws/src/kuka_moveit_config/scripts/tramo_4a.py
+python3 ~/ros2_ws/src/kuka_moveit_config/scripts/tramo_4a.py
+
+JACOBIANO
+nano ~/ros2_ws/src/kuka_moveit_config/scripts/obtener_jacobiano.py
+python3 ~/ros2_ws/src/kuka_moveit_config/scripts/obtener_jacobiano.py
+
+

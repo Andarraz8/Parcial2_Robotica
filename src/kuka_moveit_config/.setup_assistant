@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: kuka_agilus_support
+    relative_path: urdf/kr6_r700_2.urdf.xacro
+  srdf:
+    relative_path: config/kr6_r700_2.srdf
+  package_settings:
+    author_name: Andarraz-Marzuq
+    author_email: ""
+    generated_timestamp: 1789355070
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

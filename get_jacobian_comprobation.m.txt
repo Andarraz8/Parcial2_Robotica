@@ -1,0 +1,84 @@
+% Script Ampliado: Procesamiento de Trayectoria y Jacobiano - KUKA KR6 R700-2
+clear; clc; close all;
+
+% 1. Leer el archivo CSV exportado por Python (ej. tramo rojo o azul)
+archivo = 'trayectoria_roja_4d.csv'; 
+datos = readtable(archivo);
+
+% Extraer tiempos, posiciones articulares (Q) y velocidades articulares (DQ)
+t = datos.time;
+Q  = [datos.q1, datos.q2, datos.q3, datos.q4, datos.q5, datos.q6];
+DQ = [datos.dq1, datos.dq2, datos.dq3, datos.dq4, datos.dq5, datos.dq6];
+
+num_puntos = height(datos);
+velocidades_lineales = zeros(num_puntos, 1);
+
+% Funciones base para transformación homogénea
+Rx = @(r) [1, 0, 0; 0, cos(r), -sin(r); 0, sin(r), cos(r)];
+Ry = @(p) [cos(p), 0, sin(p); 0, 1, 0; -sin(p), 0, cos(p)];
+Rz = @(y) [cos(y), -sin(y), 0; sin(y), cos(y), 0; 0, 0, 1];
+f_tform = @(xyz, rpy) [Rz(rpy(3)) * Ry(rpy(2)) * Rx(rpy(1)), xyz(:); 0 0 0 1];
+f_rotZ  = @(th)  [cos(th), -sin(th), 0, 0; 
+                    sin(th),  cos(th), 0, 0; 
+                    0,        0,       1, 0; 
+                    0,        0,       0, 1];
+
+% Transformación fija final del efector (tool0)
+T_tool = f_tform([0.0, 0.0, -0.0285], [pi, 0.0, pi]);
+
+% 2. Bucle para procesar cada punto de la trayectoria de forma independiente
+for k = 1:num_puntos
+    q_k = Q(k, :);
+    dq_k = DQ(k, :)'; % Vector de velocidades articulares en este punto
+    
+    % Construir cinemática directa evaluada en el q de este punto exacto
+    T0 = eye(4);
+    T1 = f_tform([0.0, 0.0, 0.208], [3.141592653589793, 0.0, 0.0]) * f_rotZ(q_k(1));
+    T2 = f_tform([0.025, -0.0907, -0.192], [1.5707963267948966, 0.0, 0.0]) * f_rotZ(q_k(2));
+    T3 = f_tform([0.335, 0.0, -0.0042], [0.0, 0.0, 0.0]) * f_rotZ(q_k(3));
+    T4 = f_tform([0.141, -0.025, -0.0865], [1.5707963267948966, 0.0, -1.5707963267948966]) * f_rotZ(q_k(4));
+    T5 = f_tform([0.0, 0.0505, -0.224], [0.0, 1.5707963267948966, 1.5707963267948966]) * f_rotZ(q_k(5));
+    T6 = f_tform([0.0615, 0.0, -0.0505], [1.5707963267948966, 0.0, -1.5707963267948966]) * f_rotZ(q_k(6));
+
+    A1 = T0 * T1;
+    A2 = A1 * T2;
+    A3 = A2 * T3;
+    A4 = A3 * T4;
+    A5 = A4 * T5;
+    A6 = A5 * T6;
+    A_total = A6 * T_tool;
+    
+    o_n = A_total(1:3, 4);
+    % Omitir T0 y extender hasta A6 para que coincida con los marcos de los eslabones de KDL
+    origins = [A1(1:3,4), A2(1:3,4), A3(1:3,4), A4(1:3,4), A5(1:3,4), A6(1:3,4)];
+    z_axes  = [A1(1:3,3), A2(1:3,3), A3(1:3,3), A4(1:3,3), A5(1:3,3), A6(1:3,3)];
+    
+    % Construir Jacobiano Geométrico (6x6) para este punto
+    J = zeros(6, 6);
+    for i = 1:6
+        J(1:3, i) = cross(z_axes(:, i), (o_n - origins(:, i)));
+        J(4:6, i) = z_axes(:, i);
+    end
+    
+    % Calcular la velocidad cartesiana instantánea: V_cart = J * dq
+    V_cart = J * dq_k;
+    fprintf('Punto %d (t = %.2f s):\n',k, t(k));
+    J
+
+    % Guardar la magnitud de la velocidad lineal (Vx, Vy, Vz)
+    velocidades_lineales(k) = norm(V_cart(1:3));
+end
+
+% 3. Mostrar resultados y graficar el perfil de velocidad
+disp('--- Resumen de Verificación por Punto ---');
+for k = 1:num_puntos
+    fprintf('Punto %d (t = %.2f s): Velocidad Lineal = %.4f m/s\n', k, t(k), velocidades_lineales(k));
+end
+
+figure;
+plot(t, velocidades_lineales, '-ro', 'LineWidth', 2, 'MarkerSize', 6);
+grid on;
+title(['Verificación de Velocidad Cartesiana - ', archivo]);
+xlabel('Tiempo (s)');
+ylabel('Velocidad Lineal Efector (m/s)');
+ylim([0, max(velocidades_lineales) * 1.2]);
