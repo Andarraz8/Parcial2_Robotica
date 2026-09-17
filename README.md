@@ -3,9 +3,13 @@ Desarrollo en Moveit del robot KUKA KR6 R700 para la comprobacion de la cinemati
 
 ## CODIGO PARA SIMULACION EN MOVEIT##
 Codigos para inicializar el paquete y abrir Moveit
+
 cd ~/ros2_ws
+
 colcon build
+
 source install/setup.bash
+
 ros2 launch kuka_moveit_config demo.launch.py
 
 
